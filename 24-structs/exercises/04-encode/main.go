@@ -60,7 +60,71 @@ package main
 //
 // ---------------------------------------------------------
 
-func main() {
-	// use your solution from the previous exercise
+type game struct {
+	ID, Price   int
+	Name, Genre string
+}
 
+func main() {
+	games := []game{
+		{ID: 1, Name: "god of war", Price: 50, Genre: "action adventure"},
+		{ID: 2, Name: "x-com 2", Price: 30, Genre: "strategy"},
+		{ID: 3, Name: "minecraft", Price: 20, Genre: "sandbox"},
+	}
+
+	in := bufio.NewScanner(os.Stdin)
+
+	for {
+		fmt.Printf(`
+> list - list all the games
+> Id id - Game id 
+> quit - to exit
+> save - save as json
+
+`)
+		in.Scan()
+
+		fmt.Println()
+
+		input := strings.Fields(in.Text())
+	loop:
+		switch input[0] {
+		case "list":
+			fmt.Printf("#ID   %-15s %-18s Price\n", "Game", "Genre")
+
+			for _, game := range games {
+				fmt.Printf("#%d: %-15q %-20s $%d\n", game.ID, game.Name, "("+game.Genre+")", game.Price)
+			}
+		case "quit":
+			fmt.Println("Exiting!")
+			return
+		case "id":
+			if len(input) != 2 {
+				fmt.Println("Wrong input")
+				break
+			}
+
+			id, err := strconv.Atoi(input[1])
+			if err != nil {
+				fmt.Println("Wrong input: ", err)
+				break
+			}
+
+			for _, game := range games {
+				if id == game.ID {
+					fmt.Printf("  %-15s %-18s Price\n", "Game", "Genre")
+					fmt.Printf("%-15q %-20s $%d\n", game.Name, "("+game.Genre+")", game.Price)
+					break loop
+				}
+			}
+			fmt.Println("No game found for ID: ", id)
+		case "save":
+			enc, err := json.MarshalIndent(games, "", "\t")
+			if err != nil {
+				fmt.Println("Error while saving: ", err)
+			}
+			fmt.Println(string(enc))
+			return
+		}
+	}
 }
