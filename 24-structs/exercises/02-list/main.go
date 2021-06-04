@@ -29,6 +29,42 @@ package main
 //  quit commands.
 // ---------------------------------------------------------
 
+type item struct {
+	id, price int
+	name      string
+}
+
+type game struct {
+	item
+	genre string
+}
+
 func main() {
-	// use your solution from the previous exercise
+	games := []game{
+		{item: item{id: 1, name: "god of war", price: 50}, genre: "action adventure"},
+		{item: item{id: 2, name: "x-com 2", price: 30}, genre: "strategy"},
+		{item: item{id: 3, name: "minecraft", price: 20}, genre: "sandbox"},
+	}
+
+	in := bufio.NewScanner(os.Stdin)
+
+	for {
+		fmt.Printf(`
+> list - list all the games
+> quit - to exit
+`)
+		in.Scan()
+
+		switch in.Text() {
+		case "list":
+			fmt.Printf("#ID   %-15s %-18s Price\n", "Game", "Genre")
+
+			for _, game := range games {
+				fmt.Printf("#%d: %-15q %-20s $%d\n", game.id, game.name, "("+game.genre+")", game.price)
+			}
+		case "quit":
+			fmt.Println("Exiting!")
+			return
+		}
+	}
 }
